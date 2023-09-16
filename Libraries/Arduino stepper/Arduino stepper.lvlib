@@ -18,6 +18,8 @@
 				<Item Name="Hide Panel Argument--cluster.ctl" Type="VI" URL="../Hide Panel Argument--cluster.ctl"/>
 				<Item Name="Show Diagram Argument--cluster.ctl" Type="VI" URL="../Show Diagram Argument--cluster.ctl"/>
 				<Item Name="Get Module Execution Status Argument--cluster.ctl" Type="VI" URL="../Get Module Execution Status Argument--cluster.ctl"/>
+				<Item Name="Connect Argument--cluster.ctl" Type="VI" URL="../Connect Argument--cluster.ctl"/>
+				<Item Name="Disconnect Argument--cluster.ctl" Type="VI" URL="../Disconnect Argument--cluster.ctl"/>
 			</Item>
 			<Item Name="Broadcast" Type="Folder">
 				<Item Name="Did Init Argument--cluster.ctl" Type="VI" URL="../Did Init Argument--cluster.ctl"/>
@@ -30,6 +32,8 @@
 			<Item Name="Hide Panel.vi" Type="VI" URL="../Hide Panel.vi"/>
 			<Item Name="Stop Module.vi" Type="VI" URL="../Stop Module.vi"/>
 			<Item Name="Show Diagram.vi" Type="VI" URL="../Show Diagram.vi"/>
+			<Item Name="Connect.vi" Type="VI" URL="../Connect.vi"/>
+			<Item Name="Disconnect.vi" Type="VI" URL="../Disconnect.vi"/>
 		</Item>
 		<Item Name="Start Module.vi" Type="VI" URL="../Start Module.vi"/>
 		<Item Name="Synchronize Module Events.vi" Type="VI" URL="../Synchronize Module Events.vi"/>
@@ -101,6 +105,12 @@
 		<Item Name="Get Module Running State.vi" Type="VI" URL="../Get Module Running State.vi"/>
 		<Item Name="Is Safe to Destroy Refnums.vi" Type="VI" URL="../Is Safe to Destroy Refnums.vi"/>
 		<Item Name="Module Running State--enum.ctl" Type="VI" URL="../Module Running State--enum.ctl"/>
+	</Item>
+	<Item Name="3rd party" Type="Folder">
+		<Item Name="Motor_control_V1.ino" Type="Document" URL="../../../3rd party/Motor_control_V1/Motor_control_V1.ino"/>
+	</Item>
+	<Item Name="Support" Type="Folder">
+		<Item Name="COM params--typedef.ctl" Type="VI" URL="../Support/COM params--typedef.ctl"/>
 	</Item>
 	<Item Name="Main.vi" Type="VI" URL="../Main.vi">
 		<Property Name="NI.LibItem.Scope" Type="Int">2</Property>
