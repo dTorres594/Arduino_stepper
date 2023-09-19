@@ -1,15 +1,22 @@
-const int HALF = 0;
-const int FULL = 1;
+const int HALF = 1;
+const int FULL = 2;
 const int UNIPOLAR = 1;
 const int BIPOLAR = 2;
-const int IZQUIERDA = 0;
-const int DERECHA = 1;
+const int IZQUIERDA = 1;
+const int DERECHA = 2;
 const int GET_POS = 'G';
 const int STOP = 'S';
+const int CLEAR = 'C';
+const int endStop1Pin = 2;
+const int endStop2Pin = 3;
+unsigned long wait_ms;
+volatile unsigned int ES1 = 0, ES2 = 0;  // Status of the end-stops
+unsigned int endStop1, endStop2;         // Digital value of end-stop inputs
+unsigned char Home = 0;                  // Flag to indicate if in home position
 
-int bip[]={     //es el arreglo donde se guardaran los pines para la salidas digitales de los bipolares 
-  2,3,4,5}; //pines de salida
-int uni[]={     //es el arreglo donde se guardaran los pines para la salidas digitales de los unipolares
+const int bip[]={     //es el arreglo donde se guardaran los pines para la salidas digitales de los bipolares 
+  4,5,6,7}; //pines de salida
+const int uni[]={     //es el arreglo donde se guardaran los pines para la salidas digitales de los unipolares
   8,9,10,11}; //pines de salida
   
 int bi[]={      //aqui se guardan los datos recibidos de labview
@@ -19,6 +26,7 @@ int bi[]={      //aqui se guardan los datos recibidos de labview
                 //bi[2] = pasos del motor MSB, bi[3] = pasos del motor LSB
                 //bi[4] = velocidad en Hz
                 //bi[5] = tipo de paso 0-medio paso 1-paso completo
+//String dataAtPortStr;                 
 unsigned char instruccion; //variable para comandos miscelaneos
 int c=1, d=1, pasos_ejecutados=0;    // son loa contadores para los ciclos for de de los motores para los pasos
 unsigned int pasos_MSB=0,pasos_LSB=0,pasos_totales=0; // se guardan las variables para los numeros de pasos 
@@ -29,6 +37,15 @@ void setup()
   Serial.begin(9600); //Inicia el puerto.
 
   while(!Serial) { Serial.println("Conectando a puerto..."); } 
+
+  pinMode(endStop1Pin, INPUT);
+  attachInterrupt(digitalPinToInterrupt(endStop1Pin),endStop1Changed,CHANGE);
+  //attachInterrupt(digitalPinToInterrupt(endStop1Pin),endStop1Reached,RISING);
+  //attachInterrupt(digitalPinToInterrupt(endStop1Pin),endStop1Free,FALLING);
+  pinMode(endStop2Pin, INPUT);
+  attachInterrupt(digitalPinToInterrupt(endStop2Pin),endStop2Changed,CHANGE);
+  //attachInterrupt(digitalPinToInterrupt(endStop2Pin),endStop2Reached,RISING);
+  //attachInterrupt(digitalPinToInterrupt(endStop2Pin),endStop2Free,FALLING);
   
   for(int i=0; i<4; i++){   //Declara la salidas de los pines de los motores inicio del ciclo. 
                   pinMode(uni[i], OUTPUT);  //Salidas del bipolar.
@@ -39,112 +56,128 @@ void setup()
   bu_0();             //Apaga las salidas para el motor bipolar.
   bb_0();             //apaga las salidas para el motor unipolar.  
   delay(100);         //Espera de 100 milisegundos.
-  Serial.print("Comienzo");  //Dice que el motor se apago.
+    Serial.print("Ready...");  //Indica que el dispositivo está listo.
   delay(100);         //Espera de 100 milisegundos. 
 }                     //Fin del void setup.
 
-void loop()            
-{                    //Inicio del void loop.
+void loop(){                    //Inicio del void loop.
   pasos_ejecutados = 0;          //El contador de pasos se pone en ceros.  
   float time_delay;
   String message;
-  int posicionActual = 0;    // Contador de pasos para actualizar posicion al puerto. 
+  int posicionActual = 0;    // Contador de pasos para actualizar posicion al puerto.    
+  int str_len;              // Longitud de la cadena recibida en el puerto       
   
-  if (Serial.available()) {  //Solo entra cuando hay una interrupcion en el puerto.
-    for(int i=0;i<6;i++){         //Se incia el contador para leer los datos del puerto serie.
-      bi[i]=Serial.read();     //Se le el puerto serie y se almacenan cada dato en un cadena.
-      delay(50);               //Se espera 50 milisegundos para estabilizar el puerto
-    }                          //Fin del ciclo for para la lecctura del puerto   
+  if (Serial.available()) {  //Solo entra cuando hay datos en el puerto.
+    /*dataAtPortStr = Serial.readStringUntil('\n');
+    delay(50);
+    //Serial.println("Data here: " + dataAtPortStr);    
+    str_len = dataAtPortStr.length();
+    dataAtPortStr.toCharArray(bi, str_len); */
+
+    for (int i = 0; i < 6; i++)     // Print received data (only for debugging)
+    {
+      bi[i] = Serial.read();
+      delay(50);
+      Serial.print("bi[" + (String)i + "]: ");
+      Serial.println(bi[i]);
+    }
 
     motor = bi[0];
     direccion = bi[1];
-    pasos_MSB=bi[2]<<8;             //Se le el byte mÃƒÂ¡s significativo y se convierte a numero para los pasos del bipolar.
-    pasos_LSB=bi[3];                 //Se le el byte menos significartivo de los pasos bipolares.
-    pasos_totales=pasos_MSB+pasos_LSB;   //Se almacenan los pasos totales sumando los bytes.    
-    tipo = bi[5];
+    pasos_MSB=(bi[2]-1)<<8;         //Se lee el byte mas significativo y se convierte a numero para los pasos del bipolar.
+    pasos_LSB=bi[3];                //Se lee el byte menos significartivo de los pasos bipolares.
+    pasos_totales=pasos_MSB+pasos_LSB;   //Se almacenan los pasos totales sumando los bytes.      
+    time_delay = 1.0/(float)bi[4]*1000; 
+    tipo = bi[5];  
     
-    time_delay = 1.0/(float)bi[4]*1000;     
-                                  
-    for(int n=0; n<pasos_totales; n++){          //Inicio del ciclo for para los paso del motor                           
-      if(bi[0] == STOP){         //Si el primer byte es una S se sale del for.
-        break;                  //Salir del for.
-      }                         //Fin del if bi[0] == S.
-      
-      if (instruccion == GET_POS) { // Get position called
-        message = "Pos" + (String)pasos_ejecutados;
-        Serial.print(message);                     
-        posicionActual = 0;
+    if (motor == GET_POS) { // Get position called
+            message = "Pos" + (String)posicionActual;
+            Serial.println(message);                     
+            posicionActual = 0;
+    }
+
+    else if (motor == CLEAR){
+      for (int i = 0; i < 6; i++){
+        bi[i] = 0;
       }
-            
-      if(pasos_ejecutados < pasos_totales){  //Si El numero de paso en el que va es menor al numero de pasos, se entra 
-      // Comienza rutina de movimiento de motor bipolar      
-        if (motor == BIPOLAR){            
-          //Serial.print("Paso bipolar: ");
-          //Serial.println(m);
-          if (direccion == IZQUIERDA){        //Byte para saber en que sentido girara
-            d++;                  //Contador para saber en que bobina se encuentra.
-            if(d == 5){           //Se entra cuando la bobina dice que se active la 5.
-              d=1;                //Como no hay bobina 5 se regresa a a la 1.
-            }                     //Fin de el if c == 5.
-            /*Serial.print("Bipolar izquierda. c = ");
-            Serial.println(c);          */
-          }                       //Fin del if b[0] == 0. 
+      Serial.println("Cleared");
+    }
+
+    else if (motor == 1 || motor == 2){ // Inicia rutina de motor
+      Serial.println("Ready");
         
-          if (direccion == DERECHA){       //Bite para saber en que sentido girara
-            d--;               //Contador para saber en que bobina se encuentra.
-            if(d == 0){          //Se entra cuando la bobina dice que se active la 0.
-              d=4;               //Como no hay bobina 0 se regresa a a la 4.
-            }                    //Fin de el if c == 0.  
-            /*Serial.print("Bipolar derecha. c = ");
-            Serial.println(c);        */
-          }                      //Fin del if b[0] == 1. 
-          co_bb();              //Se manda a llamar para activar la bobinas.           
-        }                        //Fin del if m <= ptu.        
+      for(int n=0; n < pasos_totales; n++){          //Inicio del ciclo for para los paso del motor   
+
+        if (Serial.available()){ // Revisa si hay información en el puerto antes de mover el motor
+          instruccion=Serial.read();        //Se leen comandos desde el puerto     
+                              
+          if(instruccion == STOP){         //Si el primer byte es una S se sale del for.
+            break;                  //Salir del for.
+          }                         //Fin del if bi[0] == S.
       
-      // Comienza rutina de movimiento de motor unipolar      
-        if (motor == UNIPOLAR){           
-          if (direccion == IZQUIERDA){        //Bite para saber en que sentido girara
-            c++;                //Contador para saber en que bobina se encuentra.
-            if(c == 5){           //Se entra cuando la bobina dice que se active la 5.
-              c=1;                //Como no hay bobina 5 se regresa a a la 1.
-            }                     //Fin de el if d == 5. 
-            /*Serial.print("Unipolar izquierda. d = ");
-            Serial.println(d);         */
-          }                       //Fin del if b[1] == 0.
-          if (direccion == DERECHA){        //Bite para saber en que sentido girara
-            c--;                //Contador para saber en que bobina se encuentra.
-            if(c == 0){           //Se entra cuando la bobina dice que se active la 0.
-              c=4;                //Como no hay bobina 0 se regresa a a la 4.
-            }                     //Fin de el if d == 0.  
-            /*Serial.print("Unipolar derecha. d = ");
-            Serial.println(d);      */
-          }                       //Fin del if b[1] == 1.
-          co_bu();              //Se manda a llamar para activar la bobinas.      
-        }            
-      }                                     
-      delay((int)time_delay);   //Tiempo de espera de cada paso del bit de velocidad.
-      /*instruccion=Serial.read();        //Se lee el puerto si le llega el caracter de paro.
+          else if (instruccion == GET_POS) { // Get position called
+            message = "Pos" + (String)posicionActual;
+            Serial.println(message);                     
+            posicionActual = 0;
+          }
+        }
+            
+        if(pasos_ejecutados <= pasos_totales){  //Si El numero de paso en el que va es menor al numero de pasos, se entra 
+        // Comienza rutina de movimiento de motor bipolar      
+          if (motor == BIPOLAR){            
+            /*Serial.print("Paso bipolar: ");
+            Serial.println(pasos_ejecutados);*/
+            if (direccion == IZQUIERDA){        //Byte para saber en que sentido girara
+              d++;                  //Contador para saber en que bobina se encuentra.
+              if(d == 5){           //Se entra cuando la bobina dice que se active la 5.
+                d=1;                //Como no hay bobina 5 se regresa a a la 1.
+              }                     //Fin de el if c == 5.
+            }                       //Fin del if b[0] == 0. 
         
-      if (bot == 'S'){          //Entra si le llega el caracter S para parar los motores.
-        break;                  //Se sale del ciclo for.
-      } */       
-          
-      pasos_ejecutados++;
-      posicionActual++;
-              
-      /*if ( pasos_ejecutados >= pasos_totales ){       //Entra si ya los motores no se pueden mover que hallan llegadoa  home.
-        break; 
-      }*/
-    }  // Fin del ciclo por numero de pasos                                                
+            if (direccion == DERECHA){       //Bite para saber en que sentido girara
+              d--;               //Contador para saber en que bobina se encuentra.
+              if(d == 0){          //Se entra cuando la bobina dice que se active la 0.
+                d=4;               //Como no hay bobina 0 se regresa a a la 4.
+              }                    //Fin de el if c == 0.              
+            }                      //Fin del if b[0] == 1. 
+            co_bb();              //Se manda a llamar para activar la bobinas.           
+          }                        //Fin del if m <= ptu.        
+      
+        // Comienza rutina de movimiento de motor unipolar      
+          if (motor == UNIPOLAR){           
+            if (direccion == IZQUIERDA){        //Bite para saber en que sentido girara
+              c++;                //Contador para saber en que bobina se encuentra.
+              if(c == 5){           //Se entra cuando la bobina dice que se active la 5.
+                c=1;                //Como no hay bobina 5 se regresa a a la 1.
+              }                     //Fin de el if d == 5.             
+            }                       //Fin del if b[1] == 0.
+            if (direccion == DERECHA){        //Bite para saber en que sentido girara
+              c--;                //Contador para saber en que bobina se encuentra.
+              if(c == 0){           //Se entra cuando la bobina dice que se active la 0.
+                c=4;                //Como no hay bobina 0 se regresa a a la 4.
+              }                     //Fin de el if d == 0.    
+            }                       //Fin del if b[1] == 1.
+            co_bu();              //Se manda a llamar para activar la bobinas.      
+          }            
+        }                                   
+        delay((int)time_delay);   //Tiempo de espera de cada paso del bit de velocidad. 
+           
+        pasos_ejecutados++;
+        posicionActual++;
+      }                                    // Fin del ciclo for para el numero de pasos   
 
-    bu_0();                              //Se mandan apagar las bobinas del bipolar.
-    bb_0();                              //Se mandan apagar las bobinas del unipolar.  
-    pasos_ejecutados = 0;                  //El contador se iguala a cero para volver a empezar.
-    Serial.print("fin");                 //Se manda el caracter para apagar el indicador de que los motores ya no se moveran.
-    delay(10);                           //Tiempo de espera para estabilizar el puerto.50 original
-  }
-}                                    //Fin del if de la interrupcion del puerto serial.
+      bu_0();                              //Se mandan apagar las bobinas del bipolar.
+      bb_0();                              //Se mandan apagar las bobinas del unipolar.      
 
+      message = "Pos" + (String)posicionActual;
+      Serial.print(message + "\n");                      // Actualizar posicion final al puerto                
+      delay(50);
+      Serial.println("fin");               //Se manda el caracter para apagar el indicador de que los motores ya no se moveran.
+      delay(50);                           //Tiempo de espera para estabilizar el puerto 
+                                                 
+    }                                    // Fin de rutina de motor 
+  }                                      //Fin del if de la interrupcion del puerto serial.  
+}
 
 
 void co_bu(){          //Inicio de void para hacer las comparaciones en que bobinas se encuentra.
@@ -217,7 +250,7 @@ void bu_0() {                 //Entra si se llamo para saber que salidas digital
   digitalWrite(uni[1],LOW);   //Se manda apagar la bobinas.
   digitalWrite(uni[2],LOW);   //Se manda apagar la bobinas.
   digitalWrite(uni[3],LOW);   //Se manda apagar la bobinas.
-  Serial.println(0000);
+  //Serial.println(0000);
 }                             //fin del void.
 void bu_1() {                 //Entra si se llamo para saber que salidas digitales prender o apagar medio paso.
   digitalWrite(uni[0],HIGH);  //Se manda prender la bobinas.
@@ -325,3 +358,58 @@ void bb_44() {                //Entra si se llamo para saber que salidas digital
   digitalWrite(bip[2],LOW);   //Se manda apagar la bobinas.
   digitalWrite(bip[3],HIGH);  //Se manda prender la bobinas.
 }                             //fin del void.
+
+// Interruption routines for End-stops
+void endStop1Changed(){
+  endStop1 = digitalRead(endStop1Pin);
+  if (endStop1){
+    endStop1Reached();
+  } else {
+    endStop1Free();    
+  }
+}
+
+void endStop2Changed(){
+  endStop2 = digitalRead(endStop2Pin);
+  if (endStop2){
+    endStop2Reached();
+  } else {
+    endStop2Free();
+  }
+}
+
+void endStop1Reached(){
+  if (!bounced() && !Home){
+    ES1 = 1;    
+  }
+}
+
+void endStop2Reached(){
+  if (!bounced() && !Home){
+    ES2 = 1;    
+  }
+}
+
+void endStop1Free(){
+  if (!bounced()){
+    ES1 = 0;
+  }
+}
+
+void endStop2Free(){
+  if (!bounced()){
+    ES2 = 0;
+  }
+}
+
+// Debounce end-stop switches
+unsigned char bounced(){
+  static unsigned long last_interrupt_time = 0;
+  unsigned long interrupt_time = millis();
+  if((interrupt_time - last_interrupt_time) > 15){
+    last_interrupt_time = interrupt_time;
+    return 0;    
+  }
+  last_interrupt_time = interrupt_time;
+  return 1;
+}
