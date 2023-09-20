@@ -27,6 +27,9 @@
 				<Item Name="Read port continuously Argument--cluster.ctl" Type="VI" URL="../Read port continuously Argument--cluster.ctl"/>
 				<Item Name="Stop continuous reading Argument--cluster.ctl" Type="VI" URL="../Stop continuous reading Argument--cluster.ctl"/>
 				<Item Name="Stop motor Argument--cluster.ctl" Type="VI" URL="../Stop motor Argument--cluster.ctl"/>
+				<Item Name="Read end-stops Argument--cluster.ctl" Type="VI" URL="../Read end-stops Argument--cluster.ctl"/>
+				<Item Name="Read end-stops (Reply Payload)--cluster.ctl" Type="VI" URL="../Read end-stops (Reply Payload)--cluster.ctl"/>
+				<Item Name="Read all info Argument--cluster.ctl" Type="VI" URL="../Read all info Argument--cluster.ctl"/>
 			</Item>
 			<Item Name="Broadcast" Type="Folder">
 				<Item Name="Did Init Argument--cluster.ctl" Type="VI" URL="../Did Init Argument--cluster.ctl"/>
@@ -34,6 +37,7 @@
 				<Item Name="Error Reported Argument--cluster.ctl" Type="VI" URL="../Error Reported Argument--cluster.ctl"/>
 				<Item Name="Device connected Argument--cluster.ctl" Type="VI" URL="../Device connected Argument--cluster.ctl"/>
 				<Item Name="Data available Argument--cluster.ctl" Type="VI" URL="../Data available Argument--cluster.ctl"/>
+				<Item Name="Info ready Argument--cluster.ctl" Type="VI" URL="../Info ready Argument--cluster.ctl"/>
 			</Item>
 		</Item>
 		<Item Name="Requests" Type="Folder">
@@ -48,6 +52,8 @@
 			<Item Name="Read port continuously.vi" Type="VI" URL="../Read port continuously.vi"/>
 			<Item Name="Stop continuous reading.vi" Type="VI" URL="../Stop continuous reading.vi"/>
 			<Item Name="Stop motor.vi" Type="VI" URL="../Stop motor.vi"/>
+			<Item Name="Read end-stops.vi" Type="VI" URL="../Read end-stops.vi"/>
+			<Item Name="Read all info.vi" Type="VI" URL="../Read all info.vi"/>
 		</Item>
 		<Item Name="Start Module.vi" Type="VI" URL="../Start Module.vi"/>
 		<Item Name="Synchronize Module Events.vi" Type="VI" URL="../Synchronize Module Events.vi"/>
@@ -67,6 +73,7 @@
 		<Item Name="Update Module Execution Status.vi" Type="VI" URL="../Update Module Execution Status.vi"/>
 		<Item Name="Device connected.vi" Type="VI" URL="../Device connected.vi"/>
 		<Item Name="Data available.vi" Type="VI" URL="../Data available.vi"/>
+		<Item Name="Info ready.vi" Type="VI" URL="../Info ready.vi"/>
 	</Item>
 	<Item Name="Requests" Type="Folder">
 		<Property Name="NI.LibItem.Scope" Type="Int">2</Property>
@@ -136,6 +143,8 @@
 		<Item Name="Wake HL args--typedef.ctl" Type="VI" URL="../Support/Wake HL args--typedef.ctl"/>
 		<Item Name="Move motor--subVI.vi" Type="VI" URL="../Support/Move motor--subVI.vi"/>
 		<Item Name="Stop motor -- subVI.vi" Type="VI" URL="../Support/Stop motor -- subVI.vi"/>
+		<Item Name="Read end-stops -- subVI.vi" Type="VI" URL="../Support/Read end-stops -- subVI.vi"/>
+		<Item Name="Read all info -- subVI.vi" Type="VI" URL="../Support/Read all info -- subVI.vi"/>
 	</Item>
 	<Item Name="Main.vi" Type="VI" URL="../Main.vi">
 		<Property Name="NI.LibItem.Scope" Type="Int">2</Property>

@@ -4,9 +4,13 @@ const int UNIPOLAR = 1;
 const int BIPOLAR = 2;
 const int IZQUIERDA = 1;
 const int DERECHA = 2;
+// Miscellaneous commands
 const int GET_POS = 'G';
+const int END_STOP = 'E';
+const int INFO = 'I';
 const int STOP = 'S';
 const int CLEAR = 'C';
+// Pin declaration
 const int endStop1Pin = 2;
 const int endStop2Pin = 3;
 unsigned long wait_ms;
@@ -34,7 +38,7 @@ int tipo, direccion, motor;
 
 void setup()
 {                     //Inicion del void setup.
-  Serial.begin(9600); //Inicia el puerto.
+  Serial.begin(115200); //Inicia el puerto.
 
   while(!Serial) { Serial.println("Conectando a puerto..."); } 
 
@@ -56,7 +60,7 @@ void setup()
   bu_0();             //Apaga las salidas para el motor bipolar.
   bb_0();             //apaga las salidas para el motor unipolar.  
   delay(100);         //Espera de 100 milisegundos.
-    Serial.print("Ready...");  //Indica que el dispositivo está listo.
+  Serial.print("Ready...\n");  //Indica que el dispositivo está listo.
   delay(100);         //Espera de 100 milisegundos. 
 }                     //Fin del void setup.
 
@@ -68,18 +72,12 @@ void loop(){                    //Inicio del void loop.
   int str_len;              // Longitud de la cadena recibida en el puerto       
   
   if (Serial.available()) {  //Solo entra cuando hay datos en el puerto.
-    /*dataAtPortStr = Serial.readStringUntil('\n');
-    delay(50);
-    //Serial.println("Data here: " + dataAtPortStr);    
-    str_len = dataAtPortStr.length();
-    dataAtPortStr.toCharArray(bi, str_len); */
-
-    for (int i = 0; i < 6; i++)     // Print received data (only for debugging)
-    {
+     for (int i = 0; i < 6; i++)     // Print received data (only for debugging)
+     {
       bi[i] = Serial.read();
       delay(50);
-      Serial.print("bi[" + (String)i + "]: ");
-      Serial.println(bi[i]);
+      //Serial.print("bi[" + (String)i + "]: ");
+      //Serial.println(bi[i]);
     }
 
     motor = bi[0];
@@ -91,9 +89,9 @@ void loop(){                    //Inicio del void loop.
     tipo = bi[5];  
     
     if (motor == GET_POS) { // Get position called
-            message = "Pos" + (String)posicionActual;
-            Serial.println(message);                     
-            posicionActual = 0;
+      message = "Pos" + (String)posicionActual;
+      Serial.println(message);                     
+      posicionActual = 0;
     }
 
     else if (motor == CLEAR){
@@ -103,21 +101,39 @@ void loop(){                    //Inicio del void loop.
       Serial.println("Cleared");
     }
 
-    else if (motor == 1 || motor == 2){ // Inicia rutina de motor
-      Serial.println("Ready");
+    else if (motor == END_STOP){
+      //message = "ES" + (String)ES1 + (String)ES2 + "\n";
+      Serial.print("ES" + (String)ES1 + (String)ES2 + "\n");  
+    }
+
+    else if (motor == UNIPOLAR || motor == BIPOLAR){ // Inicia rutina de motor
+      Serial.print("Ready");
         
       for(int n=0; n < pasos_totales; n++){          //Inicio del ciclo for para los paso del motor   
 
         if (Serial.available()){ // Revisa si hay información en el puerto antes de mover el motor
-          instruccion=Serial.read();        //Se leen comandos desde el puerto     
-                              
+          instruccion = Serial.read();        //Se leen comandos desde el puerto     
+          //Serial.println(instruccion); 
+          //delay(50);
+                            
           if(instruccion == STOP){         //Si el primer byte es una S se sale del for.
             break;                  //Salir del for.
           }                         //Fin del if bi[0] == S.
       
-          else if (instruccion == GET_POS) { // Get position called
-            message = "Pos" + (String)posicionActual;
-            Serial.println(message);                     
+          else if (instruccion == GET_POS) { // "Get position" called
+            message = "Pos" + (String)posicionActual + "\n";
+            Serial.print(message);                     
+            posicionActual = 0;
+          }
+
+          else if (instruccion == END_STOP){  // "Read end-stops" called
+            message = "ES" + (String)ES1 + (String)ES2 + "\n";
+            Serial.print(message);  
+          }
+
+          else if (instruccion == INFO){  // "Read info" called
+            message = "Pos" + (String)posicionActual + "ES" + (String)ES1 + (String)ES2 + "\n";
+            Serial.print(message);
             posicionActual = 0;
           }
         }
@@ -163,6 +179,7 @@ void loop(){                    //Inicio del void loop.
         delay((int)time_delay);   //Tiempo de espera de cada paso del bit de velocidad. 
            
         pasos_ejecutados++;
+        //Serial.println(pasos_ejecutados);
         posicionActual++;
       }                                    // Fin del ciclo for para el numero de pasos   
 
@@ -171,7 +188,7 @@ void loop(){                    //Inicio del void loop.
 
       message = "Pos" + (String)posicionActual;
       Serial.print(message + "\n");                      // Actualizar posicion final al puerto                
-      delay(50);
+      delay(60);
       Serial.println("fin");               //Se manda el caracter para apagar el indicador de que los motores ya no se moveran.
       delay(50);                           //Tiempo de espera para estabilizar el puerto 
                                                  
@@ -253,30 +270,34 @@ void bu_0() {                 //Entra si se llamo para saber que salidas digital
   //Serial.println(0000);
 }                             //fin del void.
 void bu_1() {                 //Entra si se llamo para saber que salidas digitales prender o apagar medio paso.
-  digitalWrite(uni[0],HIGH);  //Se manda prender la bobinas.
+  digitalWrite(uni[0],LOW);  //Se manda prender la bobinas.
   digitalWrite(uni[1],LOW);   //Se manda apagar la bobinas.
   digitalWrite(uni[2],HIGH);  //Se manda prender la bobinas.
-  digitalWrite(uni[3],LOW);   //Se manda apagar la bobinas.
+  digitalWrite(uni[3],HIGH);   //Se manda apagar la bobinas.
+  //digitalWrite(uni[2],HIGH);  //Se manda prender la bobinas.
+  //digitalWrite(uni[3],LOW);   //Se manda apagar la bobinas.
   //Serial.println(1010);
 }                             //fin del void. 
 void bu_2() {                 //Entra si se llamo para saber que salidas digitales prender o apagar medio paso.
+  //digitalWrite(uni[0],LOW);   //Se manda apagar la bobinas.
   digitalWrite(uni[0],LOW);   //Se manda apagar la bobinas.
   digitalWrite(uni[1],HIGH);  //Se manda prender la bobinas.
   digitalWrite(uni[2],HIGH);  //Se manda prender la bobinas.
+  //digitalWrite(uni[2],HIGH);  //Se manda prender la bobinas.
   digitalWrite(uni[3],LOW);   //Se manda apagar la bobinas.
   //Serial.println(1001);
 }                             //fin del void. 
 void bu_3() {                 //Entra si se llamo para saber que salidas digitales prender o apagar medio paso.
-  digitalWrite(uni[0],LOW);   //Se manda apagar la bobinas.
-  digitalWrite(uni[1],HIGH);  //Se manda prender la bobinas.
-  digitalWrite(uni[2],LOW);   //Se manda apagar la bobinas.
-  digitalWrite(uni[3],HIGH);  //Se manda prender la bobinas.
+  digitalWrite(uni[0],HIGH);   //Orignally LOW
+  digitalWrite(uni[1],HIGH);  //Orignally HIGH
+  digitalWrite(uni[2],LOW);   //Orignally LOW
+  digitalWrite(uni[3],LOW);  //Orignally HIGH
   //Serial.println(0101);
 }                             //fin del void.
 void bu_4() {                 //Entra si se llamo para saber que salidas digitales prender o apagar medio paso.
-  digitalWrite(uni[0],HIGH);  //Se manda prender la bobinas.
-  digitalWrite(uni[1],LOW);   //Se manda apagar la bobinas.
-  digitalWrite(uni[2],LOW);   //Se manda apagar la bobinas. 
+  digitalWrite(uni[0],HIGH);  //Orignally HIGH
+  digitalWrite(uni[1],LOW);   //Orignally LOW
+  digitalWrite(uni[2],LOW);   //Orignally LOW
   digitalWrite(uni[3],HIGH);  //Se manda prender la bobinas.
   //Serial.println(1001);
 }                             //fin del void.
@@ -288,21 +309,21 @@ void bu_11() {                //Entra si se llamo para saber que salidas digital
 }                             //fin del void.
 void bu_22() {                //Entra si se llamo para saber que salidas digitales prender o apagar paso completo.
   digitalWrite(uni[0],LOW);   //Se manda apagar la bobinas.
-  digitalWrite(uni[1],LOW);   //Se manda apagar la bobinas.
-  digitalWrite(uni[2],HIGH);  //Se manda prender la bobinas.
-  digitalWrite(uni[3],LOW);   //Se manda apagar la bobinas.
+  digitalWrite(uni[1],LOW);   //Orignally LOW
+  digitalWrite(uni[2],LOW);  //Orignally HIGH
+  digitalWrite(uni[3],HIGH);   //Orignally LOW
 }                             //fin del void.
 void bu_33() {                //Entra si se llamo para saber que salidas digitales prender o apagar paso completo.
   digitalWrite(uni[0],LOW);   //Se manda apagar la bobinas.
-  digitalWrite(uni[1],HIGH);  //Se manda prender la bobinas.
-  digitalWrite(uni[2],LOW);   //Se manda apagar la bobinas.
+  digitalWrite(uni[1],LOW);  //Orignally HIGH
+  digitalWrite(uni[2],HIGH);   //Orignally LOW
   digitalWrite(uni[3],LOW);   //Se manda apagar la bobinas.
 }                             //fin del void.
 void bu_44() {                //Entra si se llamo para saber que salidas digitales prender o apagar paso completo.
   digitalWrite(uni[0],LOW);   //Se manda apagar la bobinas.
-  digitalWrite(uni[1],LOW);   //Se manda apagar la bobinas.
+  digitalWrite(uni[1],HIGH);   //Orignally LOW
   digitalWrite(uni[2],LOW);   //Se manda apagar la bobinas.
-  digitalWrite(uni[3],HIGH);  //Se manda prender la bobinas.
+  digitalWrite(uni[3],LOW);  //Se manda prender la bobinas.
 }                             //fin del void. 
 void bb_0() {                 //Entra si se llamo para saber que salidas digitales prender o apagar apagar bobinas.
   digitalWrite(bip[0],LOW);   //Se manda apagar la bobinas.
