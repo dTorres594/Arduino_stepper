@@ -38,6 +38,8 @@
 				<Item Name="Device connected Argument--cluster.ctl" Type="VI" URL="../Device connected Argument--cluster.ctl"/>
 				<Item Name="Data available Argument--cluster.ctl" Type="VI" URL="../Data available Argument--cluster.ctl"/>
 				<Item Name="Info ready Argument--cluster.ctl" Type="VI" URL="../Info ready Argument--cluster.ctl"/>
+				<Item Name="Connection failed Argument--cluster.ctl" Type="VI" URL="../Connection failed Argument--cluster.ctl"/>
+				<Item Name="Device disconected Argument--cluster.ctl" Type="VI" URL="../Device disconected Argument--cluster.ctl"/>
 			</Item>
 		</Item>
 		<Item Name="Requests" Type="Folder">
@@ -74,6 +76,8 @@
 		<Item Name="Device connected.vi" Type="VI" URL="../Device connected.vi"/>
 		<Item Name="Data available.vi" Type="VI" URL="../Data available.vi"/>
 		<Item Name="Info ready.vi" Type="VI" URL="../Info ready.vi"/>
+		<Item Name="Connection failed.vi" Type="VI" URL="../Connection failed.vi"/>
+		<Item Name="Device disconected.vi" Type="VI" URL="../Device disconected.vi"/>
 	</Item>
 	<Item Name="Requests" Type="Folder">
 		<Property Name="NI.LibItem.Scope" Type="Int">2</Property>
@@ -134,8 +138,8 @@
 	</Item>
 	<Item Name="Support" Type="Folder">
 		<Item Name="COM params--typedef.ctl" Type="VI" URL="../Support/COM params--typedef.ctl"/>
-		<Item Name="Wait ms.vi" Type="VI" URL="../Support/Wait ms.vi"/>
 		<Item Name="Connect and query.vi" Type="VI" URL="../Support/Connect and query.vi"/>
+		<Item Name="Wait ms.vi" Type="VI" URL="../Support/Wait ms.vi"/>
 		<Item Name="Motor parameters.ctl" Type="VI" URL="../Support/Motor parameters.ctl"/>
 		<Item Name="Read position.vi" Type="VI" URL="../Support/Read position.vi"/>
 		<Item Name="User events.vi" Type="VI" URL="../Support/User events.vi"/>
