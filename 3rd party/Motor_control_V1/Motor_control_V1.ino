@@ -186,10 +186,10 @@ void loop(){                    //Inicio del void loop.
       bu_0();                              //Se mandan apagar las bobinas del bipolar.
       bb_0();                              //Se mandan apagar las bobinas del unipolar.      
 
-      message = "Pos" + (String)posicionActual;
-      Serial.print(message + "\n");                      // Actualizar posicion final al puerto                
+      message = "Pos" + (String)posicionActual + "ES" + (String)ES1 + (String)ES2 + "\n";
+      Serial.print(message);                      // Actualizar posicion final al puerto                
       delay(60);
-      Serial.println("fin");               //Se manda el caracter para apagar el indicador de que los motores ya no se moveran.
+      Serial.print("fin");               //Se manda el caracter para apagar el indicador de que los motores ya no se moveran.
       delay(50);                           //Tiempo de espera para estabilizar el puerto 
                                                  
     }                                    // Fin de rutina de motor 
