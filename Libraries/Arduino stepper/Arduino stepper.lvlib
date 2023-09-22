@@ -41,6 +41,7 @@
 				<Item Name="Info ready Argument--cluster.ctl" Type="VI" URL="../Info ready Argument--cluster.ctl"/>
 				<Item Name="Connection failed Argument--cluster.ctl" Type="VI" URL="../Connection failed Argument--cluster.ctl"/>
 				<Item Name="Device disconected Argument--cluster.ctl" Type="VI" URL="../Device disconected Argument--cluster.ctl"/>
+				<Item Name="End-position reached Argument--cluster.ctl" Type="VI" URL="../End-position reached Argument--cluster.ctl"/>
 			</Item>
 		</Item>
 		<Item Name="Requests" Type="Folder">
@@ -79,6 +80,7 @@
 		<Item Name="Info ready.vi" Type="VI" URL="../Info ready.vi"/>
 		<Item Name="Connection failed.vi" Type="VI" URL="../Connection failed.vi"/>
 		<Item Name="Device disconected.vi" Type="VI" URL="../Device disconected.vi"/>
+		<Item Name="End-position reached.vi" Type="VI" URL="../End-position reached.vi"/>
 	</Item>
 	<Item Name="Requests" Type="Folder">
 		<Property Name="NI.LibItem.Scope" Type="Int">2</Property>
