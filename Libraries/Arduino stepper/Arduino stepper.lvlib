@@ -30,6 +30,7 @@
 				<Item Name="Read end-stops Argument--cluster.ctl" Type="VI" URL="../Read end-stops Argument--cluster.ctl"/>
 				<Item Name="Read end-stops (Reply Payload)--cluster.ctl" Type="VI" URL="../Read end-stops (Reply Payload)--cluster.ctl"/>
 				<Item Name="Read all info Argument--cluster.ctl" Type="VI" URL="../Read all info Argument--cluster.ctl"/>
+				<Item Name="Connect (Reply Payload)--cluster.ctl" Type="VI" URL="../Connect (Reply Payload)--cluster.ctl"/>
 			</Item>
 			<Item Name="Broadcast" Type="Folder">
 				<Item Name="Did Init Argument--cluster.ctl" Type="VI" URL="../Did Init Argument--cluster.ctl"/>
