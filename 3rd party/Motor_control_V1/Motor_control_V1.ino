@@ -102,6 +102,8 @@ void loop(){                    //Inicio del void loop.
     }
 
     else if (motor == END_STOP){
+      ES1 = digitalRead(endStop1Pin);
+      ES2 = digitalRead(endStop2Pin);
       message = "ES" + (String)ES1 + (String)ES2 + "\n";
       Serial.print(message);  
     }
