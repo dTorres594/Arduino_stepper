@@ -60,7 +60,7 @@ void setup()
   bu_0();             //Apaga las salidas para el motor bipolar.
   bb_0();             //apaga las salidas para el motor unipolar.  
   delay(100);         //Espera de 100 milisegundos.
-  Serial.print("Ready...\n");  //Indica que el dispositivo está listo.
+  Serial.print("Ready...");  //Indica que el dispositivo está listo.
   delay(100);         //Espera de 100 milisegundos. 
 }                     //Fin del void setup.
 
@@ -89,8 +89,8 @@ void loop(){                    //Inicio del void loop.
     tipo = bi[5];  
     
     if (motor == GET_POS) { // Get position called
-      message = "Pos" + (String)posicionActual;
-      Serial.println(message);                     
+      message = "Pos" + (String)posicionActual + "\n";
+      Serial.print(message);                     
       posicionActual = 0;
     }
 
@@ -102,8 +102,8 @@ void loop(){                    //Inicio del void loop.
     }
 
     else if (motor == END_STOP){
-      //message = "ES" + (String)ES1 + (String)ES2 + "\n";
-      Serial.print("ES" + (String)ES1 + (String)ES2 + "\n");  
+      message = "ES" + (String)ES1 + (String)ES2 + "\n";
+      Serial.print(message);  
     }
 
     else if (motor == UNIPOLAR || motor == BIPOLAR){ // Inicia rutina de motor
