@@ -17,7 +17,6 @@
 		<Item Name="Testers" Type="Folder">
 			<Item Name="Test Arduino stepper API.vi" Type="VI" URL="../Libraries/Arduino stepper/Test Arduino stepper API.vi"/>
 		</Item>
-		<Item Name="Motor direction -- enum.ctl" Type="VI" URL="../Libraries/Arduino stepper/Support/Motor direction -- enum.ctl"/>
 		<Item Name="Dependencies" Type="Dependencies">
 			<Item Name="vi.lib" Type="Folder">
 				<Item Name="Acquire Semaphore.vi" Type="VI" URL="/&lt;vilib&gt;/Utility/semaphor.llb/Acquire Semaphore.vi"/>

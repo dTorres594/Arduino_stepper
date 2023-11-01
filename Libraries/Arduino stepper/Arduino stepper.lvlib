@@ -152,6 +152,7 @@
 		<Item Name="Stop motor -- subVI.vi" Type="VI" URL="../Support/Stop motor -- subVI.vi"/>
 		<Item Name="Read end-stops -- subVI.vi" Type="VI" URL="../Support/Read end-stops -- subVI.vi"/>
 		<Item Name="Read all info -- subVI.vi" Type="VI" URL="../Support/Read all info -- subVI.vi"/>
+		<Item Name="Motor direction -- enum.ctl" Type="VI" URL="../Support/Motor direction -- enum.ctl"/>
 	</Item>
 	<Item Name="Main.vi" Type="VI" URL="../Main.vi">
 		<Property Name="NI.LibItem.Scope" Type="Int">2</Property>
