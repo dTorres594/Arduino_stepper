@@ -75,7 +75,7 @@ void loop(){                    //Inicio del void loop.
      for (int i = 0; i < 6; i++)     // Print received data (only for debugging)
      {
       bi[i] = Serial.read();
-      delay(50);
+      delay(20);
       //Serial.print("bi[" + (String)i + "]: ");
       //Serial.println(bi[i]);
     }
@@ -108,8 +108,14 @@ void loop(){                    //Inicio del void loop.
       Serial.print(message);  
     }
 
+    else if (motor == INFO){  // "Read info" called
+            message = "Pos" + (String)posicionActual + "ES" + (String)ES1 + (String)ES2 + "\n";
+            Serial.print(message);
+            posicionActual = 0;
+    }
+
     else if (motor == UNIPOLAR || motor == BIPOLAR){ // Inicia rutina de motor
-      Serial.print("Ready");
+      Serial.print("Ready");    
         
       for(int n=0; n < pasos_totales; n++){          //Inicio del ciclo for para los paso del motor   
 
