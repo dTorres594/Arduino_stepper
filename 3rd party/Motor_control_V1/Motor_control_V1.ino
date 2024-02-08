@@ -109,9 +109,11 @@ void loop(){                    //Inicio del void loop.
     }
 
     else if (motor == INFO){  // "Read info" called
-            message = "Pos" + (String)posicionActual + "ES" + (String)ES1 + (String)ES2 + "\n";
-            Serial.print(message);
-            posicionActual = 0;
+      ES1 = digitalRead(endStop1Pin);
+      ES2 = digitalRead(endStop2Pin);
+      message = "Pos" + (String)posicionActual + "ES" + (String)ES1 + (String)ES2 + "\n";
+      Serial.print(message);
+      posicionActual = 0;
     }
 
     else if (motor == UNIPOLAR || motor == BIPOLAR){ // Inicia rutina de motor
@@ -408,13 +410,13 @@ void endStop2Changed(){
 }
 
 void endStop1Reached(){
-  if (!bounced() && !Home){
+  if (!bounced()){
     ES1 = 1;    
   }
 }
 
 void endStop2Reached(){
-  if (!bounced() && !Home){
+  if (!bounced()){
     ES2 = 1;    
   }
 }
