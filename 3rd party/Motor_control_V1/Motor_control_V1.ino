@@ -10,6 +10,7 @@ const int END_STOP = 'E';
 const int INFO = 'I';
 const int STOP = 'S';
 const int CLEAR = 'C';
+const int HOME = 'H';
 // Pin declaration
 const int endStop1Pin = 2;
 const int endStop2Pin = 3;
@@ -76,8 +77,8 @@ void loop(){                    //Inicio del void loop.
      {
       bi[i] = Serial.read();
       delay(20);
-      //Serial.print("bi[" + (String)i + "]: ");
-      //Serial.println(bi[i]);
+      /*Serial.print("bi[" + (String)i + "]: ");
+      Serial.println(bi[i]); */
     }
 
     motor = bi[0];
@@ -115,6 +116,23 @@ void loop(){                    //Inicio del void loop.
       Serial.print(message);
       posicionActual = 0;
     }
+
+    else if (motor == HOME){  // Send motor to Home position
+      Serial.println("Homing");
+      delay(30);
+      //ES1 = digitalRead(endStop1Pin);
+      while (!ES1){     
+        co_bu();  
+        //Serial.println(ES1); 
+        if(c == 5){           //Se entra cuando la bobina dice que se active la 5.
+          c=1;                //Como no hay bobina 5 se regresa a a la 1.
+        }  
+        c++;                  //Contador para saber en que bobina se encuentra.
+        delay(1);
+        ES1 = digitalRead(endStop1Pin);  
+      }
+      Serial.println("Home");
+    } // End of home routine
 
     else if (motor == UNIPOLAR || motor == BIPOLAR){ // Inicia rutina de motor
       Serial.print("Ready");    
@@ -190,7 +208,7 @@ void loop(){                    //Inicio del void loop.
            
         pasos_ejecutados++;
         //Serial.println(pasos_ejecutados);
-        posicionActual++;
+        posicionActual++;        
       }                                    // Fin del ciclo for para el numero de pasos   
 
       bu_0();                              //Se mandan apagar las bobinas del bipolar.

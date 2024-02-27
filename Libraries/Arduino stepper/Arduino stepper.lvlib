@@ -31,6 +31,7 @@
 				<Item Name="Read end-stops (Reply Payload)--cluster.ctl" Type="VI" URL="../Read end-stops (Reply Payload)--cluster.ctl"/>
 				<Item Name="Read all info Argument--cluster.ctl" Type="VI" URL="../Read all info Argument--cluster.ctl"/>
 				<Item Name="Connect (Reply Payload)--cluster.ctl" Type="VI" URL="../Connect (Reply Payload)--cluster.ctl"/>
+				<Item Name="Home Argument--cluster.ctl" Type="VI" URL="../Home Argument--cluster.ctl"/>
 			</Item>
 			<Item Name="Broadcast" Type="Folder">
 				<Item Name="Did Init Argument--cluster.ctl" Type="VI" URL="../Did Init Argument--cluster.ctl"/>
@@ -43,6 +44,7 @@
 				<Item Name="Device disconected Argument--cluster.ctl" Type="VI" URL="../Device disconected Argument--cluster.ctl"/>
 				<Item Name="End-position reached Argument--cluster.ctl" Type="VI" URL="../End-position reached Argument--cluster.ctl"/>
 				<Item Name="End-stop reached Argument--cluster.ctl" Type="VI" URL="../End-stop reached Argument--cluster.ctl"/>
+				<Item Name="Home reached Argument--cluster.ctl" Type="VI" URL="../Home reached Argument--cluster.ctl"/>
 			</Item>
 		</Item>
 		<Item Name="Requests" Type="Folder">
@@ -59,6 +61,7 @@
 			<Item Name="Stop motor.vi" Type="VI" URL="../Stop motor.vi"/>
 			<Item Name="Read end-stops.vi" Type="VI" URL="../Read end-stops.vi"/>
 			<Item Name="Read all info.vi" Type="VI" URL="../Read all info.vi"/>
+			<Item Name="Home.vi" Type="VI" URL="../Home.vi"/>
 		</Item>
 		<Item Name="Start Module.vi" Type="VI" URL="../Start Module.vi"/>
 		<Item Name="Synchronize Module Events.vi" Type="VI" URL="../Synchronize Module Events.vi"/>
@@ -83,6 +86,7 @@
 		<Item Name="Device disconected.vi" Type="VI" URL="../Device disconected.vi"/>
 		<Item Name="End-position reached.vi" Type="VI" URL="../End-position reached.vi"/>
 		<Item Name="End-stop reached.vi" Type="VI" URL="../End-stop reached.vi"/>
+		<Item Name="Home reached.vi" Type="VI" URL="../Home reached.vi"/>
 	</Item>
 	<Item Name="Requests" Type="Folder">
 		<Property Name="NI.LibItem.Scope" Type="Int">2</Property>
@@ -155,6 +159,7 @@
 		<Item Name="Read end-stops -- subVI.vi" Type="VI" URL="../Support/Read end-stops -- subVI.vi"/>
 		<Item Name="Read all info -- subVI.vi" Type="VI" URL="../Support/Read all info -- subVI.vi"/>
 		<Item Name="Motor direction -- enum.ctl" Type="VI" URL="../Support/Motor direction -- enum.ctl"/>
+		<Item Name="Send to home.vi" Type="VI" URL="../Support/Send to home.vi"/>
 	</Item>
 	<Item Name="Main.vi" Type="VI" URL="../Main.vi">
 		<Property Name="NI.LibItem.Scope" Type="Int">2</Property>
