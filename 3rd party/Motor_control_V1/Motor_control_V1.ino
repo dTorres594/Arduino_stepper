@@ -156,7 +156,7 @@ void loop(){                    //Inicio del void loop.
 
           else if (instruccion == END_STOP){  // "Read end-stops" called
             message = "ES" + (String)ES1 + (String)ES2 + "\n";
-            Serial.print(message);  
+            Serial.print(message);
           }
 
           else if (instruccion == INFO){  // "Read info" called
